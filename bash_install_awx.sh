@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Function to install Helm
+install_helm() {
+  echo "Installing helm..."
+  curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+  sudo apt-get install apt-transport-https --yes
+  echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  sudo apt-get update
+  sudo apt-get install helm -y
+  echo "Helm installed successfully."
+}
+
 # Function to install AWX Operator using Helm
 install_awx_operator() {
   echo "Creating namespace for AWX..."
@@ -64,6 +75,13 @@ EOF
 
 # Main script execution
 main() {
+  if ! command -v helm &> /dev/null
+  then
+    install_helm
+  else
+    echo "Helm is already installed."
+  fi
+
   install_awx_operator
   create_awx_instance
 
@@ -76,3 +94,4 @@ main() {
 
 # Run the main function
 main
+
