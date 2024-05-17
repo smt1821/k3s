@@ -10,9 +10,9 @@ then
     sudo apt-get install -y curl
 fi
 
-# Install K3s
+# Install K3s with --write-kubeconfig-mode option
 echo "Installing K3s..."
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--write-kubeconfig-mode 644" sh -
 
 # Wait for K3s to start
 echo "Waiting for K3s to start..."
