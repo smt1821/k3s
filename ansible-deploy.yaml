@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ansible-deployment
+  labels:
+    app: ansible
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ansible
+  template:
+    metadata:
+      labels:
+        app: ansible
+    spec:
+      containers:
+      - name: ansible
+        image: williamyeh/ansible:alpine3  # You can choose a different Ansible image
+        command: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: ansible-playbooks
+          mountPath: /etc/ansible/playbooks
+      volumes:
+      - name: ansible-playbooks
+        configMap:
+          name: ansible-playbooks
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ansible-service
+spec:
+  selector:
+    app: ansible
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
